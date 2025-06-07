@@ -1,0 +1,29 @@
+{
+    "workflow": {
+        "portal": {},
+        "stages": [
+            {
+                "name": "production",
+                "position": 1
+            },
+            {
+                "name": "warehouse",
+                "position": 2
+            }
+        ]
+    },
+    "companyTypes": [
+        "SoleProprietorship",
+        "Partnership",
+        "Limited Liability",
+        "Corporation",
+        "Private Company",
+        "Holding Company",
+        "Joint-stock Company",
+        "Statutory Company",
+        "Small Business",
+        "Foreign Corporation",
+        "Subsidiary",
+        "Investment Company"
+    ]
+}

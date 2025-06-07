@@ -1,0 +1,60 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Parameters:
+    BucketName:
+        Type: String
+        Default: inv-sys-bliss
+
+Globals:
+    Function:
+        Environment:
+            Variables:
+                ENVIRONMENT: PROD
+                DB_HOST: 34.244.236.221
+                DB_PASS: inventory1234!@#$
+                DB_USER: inventory
+                DB_NAME: inventory
+                S3_BUCKET_NAME: !Sub '${BucketName}-${AWS::AccountId}'
+
+Resources:
+    ServerlessApiFunction:
+        Type: AWS::Serverless::Function
+        Properties:
+            CodeUri: dist
+            Handler: lambda.handler
+            Runtime: nodejs20.x
+            MemorySize: 256
+            FunctionName: inventory-serverless
+            Policies:
+                - AWSLambdaBasicExecutionRole
+                - AmazonAPIGatewayInvokeFullAccess
+                - AmazonAPIGatewayAdministrator
+                - AmazonS3FullAccess
+            Architectures:
+                - arm64
+            Timeout: 300
+            FunctionUrlConfig:
+                AuthType: NONE
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /{proxy+}
+                        Method: ANY
+
+    AppBucket:
+        Type: AWS::S3::Bucket
+        Properties:
+            BucketName: !Sub '${BucketName}-${AWS::AccountId}'
+            BucketEncryption:
+                ServerSideEncryptionConfiguration:
+                    - ServerSideEncryptionByDefault:
+                          SSEAlgorithm: AES256
+            PublicAccessBlockConfiguration:
+                BlockPublicAcls: False
+                BlockPublicPolicy: false
+                IgnorePublicAcls: False
+                RestrictPublicBuckets: False
+            OwnershipControls:
+                Rules:
+                    - ObjectOwnership: BucketOwnerPreferred
