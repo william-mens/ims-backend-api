@@ -25,7 +25,7 @@ export const getBatches = async (query: Batch) => {
 
 
     const whereConditions = [eq(batches.merchantId, query.merchantId!)];
-    if (query.batchId) whereConditions.push(eq(batches.id, query.id));
+    if (query.batchId) whereConditions.push(eq(batches.id, query.batchId));
 
     const result = await db
         .select()
