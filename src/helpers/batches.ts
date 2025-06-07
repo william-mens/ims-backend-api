@@ -9,13 +9,15 @@ export function groupBatchWithAuditLogs(rows: any[]) {
       if (!grouped.has(batchId)) {
         grouped.set(batchId, {
             batches: row.batches,
-            merchants: row.merchants,
+            product: row.product,
+            merchant: row.merchants,
             createdBy: row.userInfo,
             batchAuditLog: [],
         });
       }
   
       if (row.batchAuditLog?.id) {
+       
         grouped.get(batchId)!.batchAuditLog.push({
           id: row.batchAuditLog.id,
           batchId: row.batchAuditLog.batchId,
@@ -28,6 +30,7 @@ export function groupBatchWithAuditLogs(rows: any[]) {
           issuesDetected: row.batchAuditLog.issuesDetected,
           movedAt: row.batchAuditLog.movedAt,
         });
+        
       }
     }
   

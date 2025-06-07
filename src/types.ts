@@ -48,7 +48,8 @@ export interface Product {
 
 export interface GroupedBatchResponse {
    batches: Batches;
-   merchants: Merchants;
+   product: Product
+   merchant: Merchants;
    createdBy: UserInfo;
    batchAuditLog: {
      id: string;

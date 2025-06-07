@@ -21,6 +21,8 @@ export const getBatches = async (query: Batch) => {
     const userInfoAlias = alias(userInfo, 'userInfo');
     const fromStageAlias = alias(workflowStages, 'fromStage');
     const toStageAlias = alias(workflowStages, 'toStage');
+    const productAlias = alias(products,'product')
+
 
     const whereConditions = [eq(batches.merchantId, query.merchantId!)];
     if (query.batchId) whereConditions.push(eq(batches.id, query.id));
@@ -28,6 +30,7 @@ export const getBatches = async (query: Batch) => {
     const result = await db
         .select()
         .from(batches)
+        .leftJoin(productAlias, eq(batches.productId, productAlias.id))
         .leftJoin(batchAuditAlias, eq(batches.id, batchAuditAlias.batchId))
         .leftJoin(fromStageAlias, eq(batchAuditAlias.fromStageId, fromStageAlias.id))
         .leftJoin(toStageAlias, eq(batchAuditAlias.toStageId, toStageAlias.id))
@@ -180,10 +183,12 @@ const getSingleBatch = async (merchantId: string, batchId: string) => {
     const userInfoAlias = alias(userInfo, 'userInfo');
     const fromStageAlias = alias(workflowStages, 'fromStage');
     const toStageAlias = alias(workflowStages, 'toStage');
+    const productAlias = alias(products,'product')
 
     const result = await db
         .select()
         .from(batches)
+        .leftJoin(productAlias, eq(batches.productId, productAlias.id))
         .leftJoin(batchAuditAlias, eq(batches.id, batchAuditAlias.batchId))
         .leftJoin(fromStageAlias, eq(batchAuditAlias.fromStageId, fromStageAlias.id))
         .leftJoin(toStageAlias, eq(batchAuditAlias.toStageId, toStageAlias.id))
