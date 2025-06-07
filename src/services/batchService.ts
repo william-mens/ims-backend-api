@@ -23,7 +23,7 @@ export const getBatches = async (query: Batch) => {
     const toStageAlias = alias(workflowStages, 'toStage');
 
     const whereConditions = [eq(batches.merchantId, query.merchantId!)];
-    if (query.id) whereConditions.push(eq(batches.id, query.id));
+    if (query.batchId) whereConditions.push(eq(batches.id, query.id));
 
     const result = await db
         .select()
@@ -34,7 +34,7 @@ export const getBatches = async (query: Batch) => {
         .leftJoin(merchants, eq(merchants.id, batches.merchantId))
         .leftJoin(userInfoAlias, eq(userInfoAlias.userId, batches.createdBy))
         .where(and(...whereConditions));
-        
+
     return groupBatchWithAuditLogs(result);
 };
 

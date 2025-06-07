@@ -146,6 +146,7 @@ export interface filterProduct {
 
  export interface Batch {
     id: string,
+    batchId?:string,
     batchCode?:string,
     productId?: string,
     merchantId: string,
