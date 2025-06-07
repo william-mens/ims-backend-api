@@ -47,3 +47,4 @@ jobs:
                     --stack-name inventory-api \
                     --capabilities CAPABILITY_IAM \
                     --region eu-west-1
+                    --s3-bucket aws-sam-cli-managed-default-samclisourcebucket-ljzuxecc3bnt
