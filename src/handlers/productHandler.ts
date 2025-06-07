@@ -10,7 +10,6 @@ productRouter.get('/merchants/:merchantId/products', async (c) => await getAll(c
 
 productRouter.post(
     '/merchants/:merchantId/products',
-    // zodValidator(CreateProductSchema),
     async (c) => await store(c),
 );
 
