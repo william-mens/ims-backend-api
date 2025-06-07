@@ -2,7 +2,7 @@ import { GetBatchResponse, GroupedBatchResponse } from "../types";
 
 export function groupBatchWithAuditLogs(rows: any[]) {
     const grouped = new Map<string, GroupedBatchResponse>();
-  
+   
     for (const row of rows) {
       const batchId = row.batches.id;
   

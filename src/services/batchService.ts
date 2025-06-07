@@ -3,7 +3,7 @@ import { batches } from '../models/batch';
 import { products } from '../models/product';
 import { merchants } from '../models/merchant';
 import { eq, and } from 'drizzle-orm';
-import { Batch, getBatchAuditLog, GetBatchResponse, GroupedBatchResponse } from '../types';
+import { Batch, getBatchAuditLog } from '../types';
 import { getProductById } from './productService';
 import { batchAuditLog } from '../models/batchAuditLogs';
 import { batchReturn } from '../models/batchReturns';
@@ -17,21 +17,25 @@ import { BadExceptionError } from '../helpers/exception';
 export const getBatches = async (query: Batch) => {
     const db = await getDb();
 
+    const batchAuditAlias = alias(batchAuditLog, 'batchAuditLog');
+    const userInfoAlias = alias(userInfo, 'userInfo');
+    const fromStageAlias = alias(workflowStages, 'fromStage');
+    const toStageAlias = alias(workflowStages, 'toStage');
+
     const whereConditions = [eq(batches.merchantId, query.merchantId!)];
     if (query.id) whereConditions.push(eq(batches.id, query.id));
 
     const result = await db
-        .select({
-            batch: batches,
-            product: products,
-            merchant: merchants,
-        })
+        .select()
         .from(batches)
-        .leftJoin(products, eq(products.id, batches.productId))
+        .leftJoin(batchAuditAlias, eq(batches.id, batchAuditAlias.batchId))
+        .leftJoin(fromStageAlias, eq(batchAuditAlias.fromStageId, fromStageAlias.id))
+        .leftJoin(toStageAlias, eq(batchAuditAlias.toStageId, toStageAlias.id))
         .leftJoin(merchants, eq(merchants.id, batches.merchantId))
+        .leftJoin(userInfoAlias, eq(userInfoAlias.userId, batches.createdBy))
         .where(and(...whereConditions));
-
-    return result;
+        
+    return groupBatchWithAuditLogs(result);
 };
 
 export const getBatchStages = async (query: getBatchAuditLog) => {
@@ -70,7 +74,7 @@ export const getBatchReturns = async (query: getBatchAuditLog) => {
 
 
 export const setupBatch = async (batch: typeof batches.$inferInsert) => {
-    
+
     const db = await getDb();
 
     const findProduct = await getProductById(batch.merchantId!, batch.productId!);
