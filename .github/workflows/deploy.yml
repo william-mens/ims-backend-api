@@ -24,6 +24,7 @@ jobs:
               run: npm run build
 
             - name: Install AWS SAM CLI
+              uses: actions/setup-python@v3
               uses: aws-actions/setup-sam@v2
 
             - name: Configure AWS credentials via OIDC
