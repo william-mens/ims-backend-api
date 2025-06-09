@@ -95,45 +95,46 @@ export const setupProducts = async (
   return await getProductById(data.merchantId, data.id);
 };
 
-export const updateProduct = async (
-  updates: Product,
-  meta?: JSON
-) => {
-  const db = await getDb();
+export const updateProduct = async (updates: Product, meta?: JSON) => {
+    const db = await getDb();
 
-  if (updates.logo) {
-    let productUrl =  await imageUpload(updates.logo,updates.id);
-    updates.logo = productUrl
- }
-  await db.transaction(async (tx) => {
-
-  await tx
-    .update(products)
-    .set(updates)
-    .where(and(eq(products.id, updates.id!), eq(products.merchantId, updates.merchantId!)));
-
-  if (meta) {
-    await tx
-      .update(productMetaTable)
-      .set({ meta: JSON.stringify(meta) })
-      .where(eq(productMetaTable.productId, updates.id!));
-  }
-
-  if (updates.categories && Array.isArray(updates.categories)) {
-
-    await tx.delete(productCategories).where(eq(productCategories.productId, updates.id));
-    for (const categoryId of updates.categories) {
-      await tx.insert(productCategories).values({
-        productId: updates.id,
-        categoryId: categoryId,
-      });
+    if (updates.logo) {
+        let productUrl = await imageUpload(updates.logo, updates.id);
+        updates.logo = productUrl;
     }
+    await db.transaction(async (tx) => {
+        await tx
+            .update(products)
+            .set(updates)
+            .where(and(eq(products.id, updates.id!), eq(products.merchantId, updates.merchantId!)));
 
-  }
+        if (meta) {
+            await tx
+                .update(productMetaTable)
+                .set({ meta: JSON.stringify(meta) })
+                .where(eq(productMetaTable.productId, updates.id!));
+        }
 
- });
+        if (updates.categories && Array.isArray(updates.categories)) {
+            for (const categoryId of updates.categories) {
+                await tx
+                    .delete(productCategories)
+                    .where(
+                        and(
+                            eq(productCategories.productId, updates.id!),
+                            eq(productCategories.categoryId, categoryId),
+                        ),
+                    );
 
-  return await getProductById(updates.merchantId!, updates.id!);
+                await tx.insert(productCategories).values({
+                    productId: updates.id,
+                    categoryId: categoryId,
+                });
+            }
+        }
+    });
+
+    return await getProductById(updates.merchantId!, updates.id!);
 };
 
 
