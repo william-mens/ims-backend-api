@@ -96,6 +96,8 @@ export const setupProducts = async (
 };
 
 export const updateProduct = async (updates: Product, meta?: JSON) => {
+   console.log('received request to upate Product',updates,meta);
+   
     const db = await getDb();
 
     if (updates.logo) {
@@ -121,14 +123,14 @@ export const updateProduct = async (updates: Product, meta?: JSON) => {
                     .delete(productCategories)
                     .where(
                         and(
-                            eq(productCategories.productId, updates.id!),
                             eq(productCategories.categoryId, categoryId),
+                            eq(productCategories.productId, updates.id ),
                         ),
                     );
 
                 await tx.insert(productCategories).values({
-                    productId: updates.id,
                     categoryId: categoryId,
+                    productId: updates.id
                 });
             }
         }
