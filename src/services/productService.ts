@@ -10,6 +10,7 @@ import { productCategories } from '../models/productCategories';
 import { productStockLogs } from '../models/productStockLog';
 import { groupProductRows } from '../helpers/groupProductRows';
 import {imageUpload} from '../helpers/aws';
+import { batches } from '../models/batch';
 
 export const getProducts = async (query: filterProduct) => {
   const db = await getDb();
@@ -19,6 +20,9 @@ export const getProducts = async (query: filterProduct) => {
   if (query.productId) whereConditions.push(eq(products.id, query.productId));
   if (query.categoryId) whereConditions.push(eq(categories.id, query.categoryId));
 
+  //    await tx.insert(batches).values(batchRequest);
+
+
   const result = await db
     .select({
         products: products,
@@ -26,6 +30,7 @@ export const getProducts = async (query: filterProduct) => {
         categories:categories
     })
     .from(products)
+    .leftJoin(batches, eq(batches.productId, productMetaTable.productId))
     .leftJoin(productMetaTable, eq(products.id, productMetaTable.productId))
     .leftJoin(productCategories, eq(products.id, productCategories.productId))
     .leftJoin(categories, eq(productCategories.categoryId, categories.id))
