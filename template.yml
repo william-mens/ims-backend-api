@@ -10,9 +10,9 @@ Globals:
         Environment:
             Variables:
                 ENVIRONMENT: PROD
-                DB_HOST: 34.244.236.221
-                DB_PASS: inventory1234!@#$
-                DB_USER: inventory
+                DB_HOST: ims-db.cb64oesc8z6m.eu-west-1.rds.amazonaws.com
+                DB_PASS: imsdevuserpassword
+                DB_USER: devuser
                 DB_NAME: inventory
                 S3_BUCKET_NAME: !Sub '${BucketName}-${AWS::AccountId}'
 
