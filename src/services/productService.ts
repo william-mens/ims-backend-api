@@ -20,7 +20,6 @@ export const getProducts = async (query: filterProduct) => {
   if (query.productId) whereConditions.push(eq(products.id, query.productId));
   if (query.categoryId) whereConditions.push(eq(categories.id, query.categoryId));
 
-  //    await tx.insert(batches).values(batchRequest);
 
 
   const result = await db
@@ -30,8 +29,8 @@ export const getProducts = async (query: filterProduct) => {
         categories:categories
     })
     .from(products)
-    .leftJoin(batches, eq(batches.productId, productMetaTable.productId))
-    .leftJoin(productMetaTable, eq(products.id, productMetaTable.productId))
+    .leftJoin(productMetaTable, eq(products.id, productMetaTable.productId)) 
+    .leftJoin(batches, eq(batches.productId, productMetaTable.productId)) 
     .leftJoin(productCategories, eq(products.id, productCategories.productId))
     .leftJoin(categories, eq(productCategories.categoryId, categories.id))
     .where(and(...whereConditions));
