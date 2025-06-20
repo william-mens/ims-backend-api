@@ -10,10 +10,7 @@ Globals:
         Environment:
             Variables:
                 ENVIRONMENT: PROD
-                DB_HOST: ims-db.cb64oesc8z6m.eu-west-1.rds.amazonaws.com
-                DB_PASS: imsdevuserpassword
-                DB_USER: devuser
-                DB_NAME: inventory
+                CRED_PATH: '/inventory/db_credentials'
                 S3_BUCKET_NAME: !Sub '${BucketName}-${AWS::AccountId}'
 
 Resources:
@@ -30,6 +27,11 @@ Resources:
                 - AmazonAPIGatewayInvokeFullAccess
                 - AmazonAPIGatewayAdministrator
                 - AmazonS3FullAccess
+                - Statement:
+                      - Effect: Allow
+                        Action:
+                            - ssm:GetParameter
+                        Resource: arn:aws:ssm:eu-west-1:975049951118:parameter/inventory/db_credentials
             Architectures:
                 - arm64
             Timeout: 300
