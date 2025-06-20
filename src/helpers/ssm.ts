@@ -12,6 +12,6 @@ export const getDbCredentials = async () => {
     throw new Error('DB credentials not found');
   }
 
-  console.log('credentials',credentials)
+  console.log('credentialsss',credentials)
   return credentials; 
 };
