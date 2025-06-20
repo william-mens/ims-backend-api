@@ -1,4 +1,54 @@
-name: Deploy Hono App to AWS Lambda
+# name: Deploy Hono App to AWS Lambda
+
+# on:
+#     push:
+#         branches: [main]
+
+# permissions:
+#     id-token: write
+#     contents: read
+
+# jobs:
+#     deploy:
+#         runs-on: ubuntu-latest
+
+#         steps:
+#             - name: Checkout repository
+#               uses: actions/checkout@v3
+
+#             - name: Setup Node.js
+#               uses: actions/setup-node@v4
+#               with:
+#                   node-version: '20'
+
+#             - name: Install dependencies
+#               run: npm ci
+
+#             - name: Build project
+#               run: npm run build
+
+#             - name: Install Pythonv3
+#               uses: actions/setup-python@v3
+
+#             - name: Install AWS SAM CLI
+#               uses: aws-actions/setup-sam@v2
+
+#             - name: Configure AWS credentials via OIDC
+#               uses: aws-actions/configure-aws-credentials@v3
+#               with:
+#                   role-to-assume: arn:aws:iam::975049951118:role/IMSGitHubDeploymentRole
+#                   aws-region: eu-west-1
+
+#             - name: Deploy with SAM
+#               run: |
+#                   sam deploy \
+#                     --no-confirm-changeset \
+#                     --no-fail-on-empty-changeset \
+#                     --stack-name inventory-api \
+#                     --capabilities CAPABILITY_IAM \
+#                     --region eu-west-1 \
+#                     --s3-bucket aws-sam-cli-managed-default-samclisourcebucket-ljzuxecc3bnt
+name: Fast Deploy Hono App to AWS Lambda
 
 on:
     push:
@@ -13,13 +63,16 @@ jobs:
         runs-on: ubuntu-latest
 
         steps:
-            - name: Checkout repository
-              uses: actions/checkout@v3
+            - uses: actions/checkout@v3
 
-            - name: Setup Node.js
-              uses: actions/setup-node@v4
+            - uses: actions/setup-node@v4
               with:
                   node-version: '20'
+
+            - uses: actions/cache@v3
+              with:
+                  path: node_modules
+                  key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
 
             - name: Install dependencies
               run: npm ci
@@ -27,24 +80,16 @@ jobs:
             - name: Build project
               run: npm run build
 
-            - name: Install Pythonv3
-              uses: actions/setup-python@v3
-
-            - name: Install AWS SAM CLI
-              uses: aws-actions/setup-sam@v2
-
-            - name: Configure AWS credentials via OIDC
-              uses: aws-actions/configure-aws-credentials@v3
+            - uses: aws-actions/configure-aws-credentials@v3
               with:
                   role-to-assume: arn:aws:iam::975049951118:role/IMSGitHubDeploymentRole
                   aws-region: eu-west-1
 
-            - name: Deploy with SAM
+            - name: Deploy using AWS CLI
               run: |
-                  sam deploy \
-                    --no-confirm-changeset \
-                    --no-fail-on-empty-changeset \
+                  aws cloudformation deploy \
+                    --template-file template.yml \
                     --stack-name inventory-api \
                     --capabilities CAPABILITY_IAM \
                     --region eu-west-1 \
-                    --s3-bucket aws-sam-cli-managed-default-samclisourcebucket-ljzuxecc3bnt
+                    --no-fail-on-empty-changeset
