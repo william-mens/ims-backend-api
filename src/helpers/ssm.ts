@@ -4,7 +4,7 @@ const ssmProvider = new SSMProvider();
 
 export const getDbCredentials = async () => {
   const credentials = await ssmProvider.get(process.env.CRED_PATH as string, {
-    transform: 'json',  
+    withDecryption: true, 
     maxAge: 300,         
   });
 
@@ -13,5 +13,5 @@ export const getDbCredentials = async () => {
   }
 
   console.log('credentialsss',credentials)
-  return credentials; 
+  return JSON.parse(credentials); 
 };
