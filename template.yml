@@ -30,6 +30,7 @@ Resources:
                 - Statement:
                       - Effect: Allow
                         Action:
+                            - kms:Decrypt
                             - ssm:GetParameter
                         Resource: arn:aws:ssm:eu-west-1:975049951118:parameter/inventory/db_credentials
             Architectures:

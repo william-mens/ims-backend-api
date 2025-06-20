@@ -3,6 +3,7 @@ import { getParameter } from '@aws-lambda-powertools/parameters/ssm';
 
 export const getDbCredentials = async () => {
   const credentials = await getParameter(process.env.CRED_PATH as string, {
+    decrypt:true,
     maxAge: 300,         
   });
 
