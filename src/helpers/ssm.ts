@@ -1,9 +1,8 @@
-import { SSMProvider } from '@aws-lambda-powertools/parameters/ssm';
+import { getParameter } from '@aws-lambda-powertools/parameters/ssm';
 
-const ssmProvider = new SSMProvider();
 
 export const getDbCredentials = async () => {
-  const credentials = await ssmProvider.get(process.env.CRED_PATH as string, {
+  const credentials = await getParameter(process.env.CRED_PATH as string, {
     withDecryption: true, 
     maxAge: 300,         
   });
