@@ -3,12 +3,16 @@ import mysql from 'mysql2/promise';
 import {getDbCredentials} from './helpers/ssm'
 export const getDb = async () => {
  const creds = await getDbCredentials();
+ console.log('cred',creds);
+ console.log('host',creds.host);
+
+ 
 
   const connection = await mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    database: process.env.DB_NAME,
-    password: process.env.DB_PASS,
+    host: creds.host,
+    user: creds.user,
+    database: creds.database,
+    password: creds.password,
   });
 
   return drizzle(connection);
