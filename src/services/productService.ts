@@ -26,11 +26,12 @@ export const getProducts = async (query: filterProduct) => {
     .select({
         products: products,
         productMeta:productMetaTable,
-        categories:categories
+        categories:categories,
+        batches:batches
     })
     .from(products)
     .leftJoin(productMetaTable, eq(products.id, productMetaTable.productId)) 
-    .leftJoin(batches, eq(batches.productId, productMetaTable.productId)) 
+    .leftJoin(batches, eq(batches.productId, products.id)) 
     .leftJoin(productCategories, eq(products.id, productCategories.productId))
     .leftJoin(categories, eq(productCategories.categoryId, categories.id))
     .where(and(...whereConditions));

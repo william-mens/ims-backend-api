@@ -4,7 +4,6 @@ import {getDbCredentials} from './helpers/ssm'
 export const getDb = async () => {
  const creds = await getDbCredentials();
 
- console.log('logging credentials',creds);
  
  
   const connection = await mysql.createConnection({
