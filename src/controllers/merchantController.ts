@@ -1,9 +1,7 @@
 import { Context } from 'hono';
 import { getMerchants, setupMerchants, updateMerchant } from '../services/merchantService';
 import { SetupMerchant } from '../types';
-import { generateUniqueMerchantCode } from '../helpers/generateUniqueMerchantCode';
 import { prepareResponse } from '../helpers/response';
-import { alias } from 'drizzle-orm/gel-core';
 
 export const getAll = async (c: Context) => {
   try {
