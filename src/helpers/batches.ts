@@ -25,7 +25,7 @@ export function groupBatchWithAuditLogs(rows: any[]) {
           fromStage: row.fromStage,
           toStageId: row.batchAuditLog.toStageId,
           toStage: row.toStage,
-          movedBy: row.batchAuditLog.movedBy,
+          movedBy: row.movedBy,
           notes: row.batchAuditLog.notes,
           issuesDetected: row.batchAuditLog.issuesDetected,
           movedAt: row.batchAuditLog.movedAt,

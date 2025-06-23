@@ -22,6 +22,7 @@ export const getBatches = async (query: Batch) => {
     const fromStageAlias = alias(workflowStages, 'fromStage');
     const toStageAlias = alias(workflowStages, 'toStage');
     const productAlias = alias(products,'product')
+    const movedByAlias = alias(userInfo, 'movedBy');
 
 
     const whereConditions = [eq(batches.merchantId, query.merchantId!)];
@@ -32,6 +33,7 @@ export const getBatches = async (query: Batch) => {
         .from(batches)
         .leftJoin(productAlias, eq(batches.productId, productAlias.id))
         .leftJoin(batchAuditAlias, eq(batches.id, batchAuditAlias.batchId))
+        .leftJoin(movedByAlias, eq(movedByAlias.userId, batchAuditAlias.movedBy))
         .leftJoin(fromStageAlias, eq(batchAuditAlias.fromStageId, fromStageAlias.id))
         .leftJoin(toStageAlias, eq(batchAuditAlias.toStageId, toStageAlias.id))
         .leftJoin(merchants, eq(merchants.id, batches.merchantId))

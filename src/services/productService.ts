@@ -2,7 +2,6 @@ import { getDb } from '../db';
 import { products } from '../models/product';
 import { productMeta as productMetaTable } from '../models/productMeta';
 import { categories } from '../models/categories';
-import { getMerchantById } from './merchantService';
 import { generateUniqueSKU } from '../helpers/generateUniqueSku';
 import { eq, and, like } from 'drizzle-orm';
 import { filterProduct, Product } from '../types';
