@@ -13,6 +13,7 @@ import { generateUniqueBatchCode } from '../helpers/generateUniqueBatchCode';
 import { userInfo } from '../models/userInfo';
 import { groupBatchWithAuditLogs } from '../helpers/batches';
 import { BadExceptionError } from '../helpers/exception';
+import { inventory } from '../models/inventory';
 
 export const getBatches = async (query: Batch) => {
     const db = await getDb();
@@ -141,6 +142,13 @@ export const setupBatch = async (batch: typeof batches.$inferInsert) => {
     await db.transaction(async (tx) => {
         await tx.insert(batches).values(batchRequest);
         await tx.insert(batchAuditLog).values(batchAuditLogRequest);
+        await tx.insert(inventory).values({
+            id: crypto.randomUUID(),
+            merchantId: batchRequest.merchantId,
+            batchId: batchRequest.id,
+            stageId: batchAuditLogRequest.toStageId,
+            quantity: batchRequest.quantity,
+          });
     });
 
     return await getSingleBatch(batch.merchantId, batchId);
@@ -152,7 +160,27 @@ export const trackBatchStage = async (batch: typeof batchAuditLog.$inferInsert) 
     const batchAuditId = crypto.randomUUID();
     const batchRequest = { ...{ id: batchAuditId as string }, ...batch };
 
-    await db.insert(batchAuditLog).values(batchRequest);
+    const findBatch = await db
+    .select({ quantity: batches.quantity, merchantId: batches.merchantId })
+    .from(batches)
+    .where(eq(batches.id, batch.batchId));
+  
+  if (!findBatch || findBatch.length === 0) {
+    throw new BadExceptionError(`Batch ${batch.batchId} not found`);
+  }
+
+  const batchData = findBatch[0];
+
+    await db.transaction(async (tx) => {
+        await tx.insert(batchAuditLog).values(batchRequest);
+        await tx.insert(inventory).values({
+            id: crypto.randomUUID(),
+            merchantId: batchData.merchantId,
+            batchId: batchRequest.batchId,
+            stageId: batchRequest.toStageId as string,
+            quantity: batchData.quantity,
+          });
+    });
 
     return await getSingleBatchAudit(batchAuditId);
 };
